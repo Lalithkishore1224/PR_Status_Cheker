@@ -236,7 +236,7 @@ function saveHash () {
   if (state.view !== 'all') p.set('view', state.view)
   for (const k of state.open) p.append('pr', k)
   const s = p.toString()
-  history.replaceState(null, '', s ? `#${s}` : location.pathname)
+  history.replaceState(null, '', s ? `#${s}` : location.pathname + location.search)
 }
 
 function render () {
