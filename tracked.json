@@ -1,0 +1,69 @@
+{
+  "author": "Lalithkishore1224",
+  "discover": "is:pr author:Lalithkishore1224 org:fastify",
+  "items": [
+    {
+      "repo": "fastify/fastify",
+      "issue": 7231,
+      "branch": "fix/max-param-length-error-label",
+      "draft": "fastify-7231",
+      "title": "fix: use \"URI Too Long\" as the error label for FST_ERR_MAX_PARAM_LENGTH"
+    },
+    {
+      "repo": "fastify/fastify-cli",
+      "issue": 756,
+      "branch": "fix/ts-template-test-glob",
+      "draft": "fastify-cli-756",
+      "title": "fix: do not quote the test glob in the TypeScript template"
+    },
+    {
+      "repo": "fastify/fastify-multipart",
+      "issue": 470,
+      "branch": "fix/clean-temp-file-on-size-limit",
+      "draft": "fastify-multipart-470",
+      "title": "fix: stop saveRequestFiles after a file hits the fileSize limit"
+    },
+    {
+      "repo": "fastify/fastify-express",
+      "issue": 54,
+      "branch": "fix/inject-with-express",
+      "draft": "fastify-express-54",
+      "title": "fix: return injected payload when express handles the request"
+    },
+    {
+      "repo": "fastify/fastify-secure-session",
+      "issue": 278,
+      "branch": "feat/custom-session-serializer",
+      "draft": "fastify-secure-session-278",
+      "title": "feat: add serializer option for session data"
+    },
+    {
+      "repo": "fastify/fastify-jwt",
+      "issue": 344,
+      "branch": "docs/typescript-custom-decorator-name",
+      "draft": "fastify-jwt-344",
+      "title": "docs: explain typing a custom decoratorName in TypeScript"
+    },
+    {
+      "repo": "fastify/fastify-oauth2",
+      "issue": 306,
+      "branch": "feat/per-request-authorization-params",
+      "draft": "fastify-oauth2-306",
+      "title": "feat: allow callbackUriParams to be a function of the request"
+    },
+    {
+      "repo": "fastify/fastify-autoload",
+      "issue": 404,
+      "branch": "fix/detect-ts-loader-in-require-cache",
+      "draft": "fastify-autoload-404",
+      "title": "fix: detect TypeScript loaders preloaded with require()"
+    },
+    {
+      "repo": "fastify/env-schema",
+      "issue": 157,
+      "branch": "docs/typing-separator-arrays",
+      "draft": "env-schema-157",
+      "title": "docs: show how to type separator properties as string[]"
+    }
+  ]
+}
