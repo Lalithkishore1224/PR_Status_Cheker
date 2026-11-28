@@ -1,0 +1,1625 @@
+{
+  "generatedAt": "2026-11-28T20:26:36.813Z",
+  "author": "Lalithkishore1224",
+  "prs": [
+    {
+      "key": "fastify/fastify#7233",
+      "repo": "fastify/fastify",
+      "number": 7233,
+      "title": "fix: use \"URI Too Long\" as the error label for FST_ERR_MAX_PARAM_LENGTH",
+      "url": "https://github.com/fastify/fastify/pull/7233",
+      "body": "Refs #7231\n\nThe default response for `FST_ERR_MAX_PARAM_LENGTH` is a 414 but its body says `\"error\": \"Bad Request\"`. This changes it to `\"URI Too Long\"` so it matches the status code, the same way `FST_ERR_BAD_URL` pairs 400 with `\"Bad Request\"`.\n\nThe `frameworkErrors` docs still said only `FST_ERR_BAD_URL` and `FST_ERR_ASYNC_CONSTRAINT` are supported, but `FST_ERR_MAX_PARAM_LENGTH` has gone through `frameworkErrors` since #6716. I've added it to the list. I also added a short note that these router-level errors are handled before a route is matched, so `onRequest`/`onSend` hooks and `setErrorHandler` don't run for them, and that `frameworkErrors` is the place to add things like CORS headers.\n\nBefore / after, using the repro from the issue:\n\n```\n# main\n414 onRequest skipped {\"error\":\"Bad Request\",\"code\":\"FST_ERR_MAX_PARAM_LENGTH\",...,\"statusCode\":414}\n# this branch\n414 onRequest skipped {\"error\":\"URI Too Long\",\"code\":\"FST_ERR_MAX_PARAM_LENGTH\",...,\"statusCode\":414}\n```\n\nI left the main part of the issue (running the full lifecycle for these errors) out of this PR on purpose. d66ebd12 deliberately made malformed and over-long URLs fail closed before any application not-found handler runs, and sending them through `onRequest` + `setErrorHandler` would undo part of that. If you'd rather go that way, or just log the request in the default path, I'm happy to follow up.\n\n#### Checklist\n\n- [x] run `npm run test` (lint, unit, types all pass)\n- [x] tests and/or benchmarks are included\n- [x] documentation is changed or added\n",
+      "draft": false,
+      "state": "closed",
+      "mergedAt": "2026-11-21T12:58:05Z",
+      "closedAt": "2026-11-21T12:58:05Z",
+      "createdAt": "2026-11-17T20:07:22Z",
+      "updatedAt": "2026-11-21T12:58:05Z",
+      "branch": "fix/max-param-length-error-label",
+      "base": "main",
+      "additions": 16,
+      "deletions": 2,
+      "changedFiles": 3,
+      "mergeable": "unknown",
+      "labels": [
+        {
+          "name": "documentation",
+          "color": "fef2c0"
+        }
+      ],
+      "requestedReviewers": [],
+      "issue": {
+        "number": 7231,
+        "title": "Router-level errors (FST_ERR_MAX_PARAM_LENGTH, FST_ERR_BAD_URL) bypass hooks, setErrorHandler and request logging",
+        "url": "https://github.com/fastify/fastify/issues/7231",
+        "state": "open"
+      },
+      "reviews": [
+        {
+          "reviewer": {
+            "login": "mcollina",
+            "avatar": "https://avatars.githubusercontent.com/u/52195?v=4",
+            "url": "https://github.com/mcollina",
+            "bot": false,
+            "association": "MEMBER"
+          },
+          "state": "APPROVED",
+          "at": "2026-11-20T19:40:38Z"
+        },
+        {
+          "reviewer": {
+            "login": "gurgunday",
+            "avatar": "https://avatars.githubusercontent.com/u/74139498?u=b641c93a2bdc1213cddca5e1062b5d4c07145051&v=4",
+            "url": "https://github.com/gurgunday",
+            "bot": false,
+            "association": "MEMBER"
+          },
+          "state": "APPROVED",
+          "at": "2026-11-21T12:58:02Z"
+        }
+      ],
+      "conversation": [
+        {
+          "kind": "review",
+          "state": "COMMENTED",
+          "author": {
+            "login": "copilot-pull-request-reviewer[bot]",
+            "avatar": "https://avatars.githubusercontent.com/in/946600?v=4",
+            "url": "https://github.com/apps/copilot-pull-request-reviewer",
+            "bot": true,
+            "association": "CONTRIBUTOR"
+          },
+          "body": "<!-- ccr-overview-v2 -->\n\n### 🟢 Approval recommended\n\nNo active review issues remain for the HTTP 414 response-label correction and accompanying test and documentation updates.\n\n**No open issues** 🎉\n\n<details>\n<summary><strong>What changed in this PR</strong></summary>\n\nCorrects Fastify’s default `FST_ERR_MAX_PARAM_LENGTH` response label to match its HTTP 414 status and documents the existing router-error handling behavior. Request lifecycle behavior remains unchanged.\n\n**Changes:**\n- Changes the error label from `\"Bad Request\"` to `\"URI Too Long\"`.\n- Adds a regression assertion for the complete 414 response body.\n- Documents `FST_ERR_MAX_PARAM_LENGTH` support in `frameworkErrors` and clarifies lifecycle limitations.\n\n| File | Description |\r\n| ---- | ----------- |\r\n| `test/​router-options.test.js` | Asserts the corrected label and full error response body. |\r\n| `fastify.js` | Uses `\"URI Too Long\"` for the default 414 response. |\r\n| `docs/​Reference/​Server.md` | Expands supported framework errors and explains response customization outside the regular lifecycle. |\n</details>\n\n<sub>Review effort: Balanced</sub>",
+          "at": "2026-11-18T20:11:25Z",
+          "url": "https://github.com/fastify/fastify/pull/7233#pullrequestreview-5964248198"
+        },
+        {
+          "kind": "review",
+          "state": "COMMENTED",
+          "author": {
+            "login": "Lalithkishore1224",
+            "avatar": "https://avatars.githubusercontent.com/u/187094234?u=3c6e6178c520979e504581d29b376a8f55ffbf65&v=4",
+            "url": "https://github.com/Lalithkishore1224",
+            "bot": false,
+            "association": "CONTRIBUTOR"
+          },
+          "body": "done",
+          "at": "2026-11-20T18:23:25Z",
+          "url": "https://github.com/fastify/fastify/pull/7233#pullrequestreview-5997476240"
+        },
+        {
+          "kind": "review",
+          "state": "APPROVED",
+          "author": {
+            "login": "mcollina",
+            "avatar": "https://avatars.githubusercontent.com/u/52195?v=4",
+            "url": "https://github.com/mcollina",
+            "bot": false,
+            "association": "MEMBER"
+          },
+          "body": "lgtm",
+          "at": "2026-11-20T19:40:38Z",
+          "url": "https://github.com/fastify/fastify/pull/7233#pullrequestreview-5998373133"
+        },
+        {
+          "kind": "review",
+          "state": "APPROVED",
+          "author": {
+            "login": "gurgunday",
+            "avatar": "https://avatars.githubusercontent.com/u/74139498?u=b641c93a2bdc1213cddca5e1062b5d4c07145051&v=4",
+            "url": "https://github.com/gurgunday",
+            "bot": false,
+            "association": "MEMBER"
+          },
+          "body": "lgtm",
+          "at": "2026-11-21T12:58:02Z",
+          "url": "https://github.com/fastify/fastify/pull/7233#pullrequestreview-6005323188"
+        }
+      ],
+      "ci": {
+        "checks": [
+          {
+            "name": "Backport",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify/actions/runs/44906487320/job/136853074203"
+          },
+          {
+            "name": "automerge",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/fastify/fastify/actions/runs/44165926588/job/135105534201"
+          },
+          {
+            "name": "package",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify/actions/runs/44165926588/job/135104611070"
+          },
+          {
+            "name": "test-unit (26, macos-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify/actions/runs/44165926588/job/135100175003"
+          },
+          {
+            "name": "test-unit (24, ubuntu-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify/actions/runs/44165926588/job/135100174989"
+          },
+          {
+            "name": "test-unit (26, ubuntu-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify/actions/runs/44165926588/job/135100174977"
+          },
+          {
+            "name": "test-unit (26, windows-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify/actions/runs/44165926588/job/135100174955"
+          },
+          {
+            "name": "test-unit (24, macos-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify/actions/runs/44165926588/job/135100174937"
+          },
+          {
+            "name": "Test pino compatibility (^10)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify/actions/runs/44165926588/job/135100174894"
+          },
+          {
+            "name": "test-types",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify/actions/runs/44165926588/job/135100174847"
+          },
+          {
+            "name": "test-unit (24, windows-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify/actions/runs/44165926588/job/135100174821"
+          },
+          {
+            "name": "Test pino compatibility (^9)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify/actions/runs/44165926588/job/135100174647"
+          },
+          {
+            "name": "package",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify/actions/runs/44165925993/job/135099682203"
+          },
+          {
+            "name": "coverage-nix / check-coverage",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify/actions/runs/44165926588/job/135098471814"
+          },
+          {
+            "name": "coverage-win / check-coverage",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify/actions/runs/44165926588/job/135098471721"
+          },
+          {
+            "name": "run",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/fastify/fastify/actions/runs/44165925738/job/135097771509"
+          },
+          {
+            "name": "test-unit-custom",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/fastify/fastify/actions/runs/44165926588/job/135097691044"
+          },
+          {
+            "name": "quality-check / Dependency Review",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify/actions/runs/44165926588/job/135097688737"
+          },
+          {
+            "name": "quality-check / Lint Code",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify/actions/runs/44165926588/job/135097688531"
+          },
+          {
+            "name": "quality-check / Check Licenses",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify/actions/runs/44165926588/job/135097688060"
+          },
+          {
+            "name": "test-unit (24, ubuntu-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify/actions/runs/44165925993/job/135097675999"
+          },
+          {
+            "name": "test-unit (24, windows-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify/actions/runs/44165925993/job/135097675777"
+          },
+          {
+            "name": "test-unit (24, macos-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify/actions/runs/44165925993/job/135097675762"
+          },
+          {
+            "name": "test-types",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify/actions/runs/44165925993/job/135097675322"
+          },
+          {
+            "name": "install-production (ubuntu-latest, nsolid, 24, 11)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify/actions/runs/44165925745/job/135097674386"
+          },
+          {
+            "name": "run",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/fastify/fastify/actions/runs/44165925738/job/135097671950"
+          },
+          {
+            "name": "pull-request-title-check",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify/actions/runs/44165925729/job/135097668711"
+          },
+          {
+            "name": "install-production (26, ubuntu-latest, 11)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify/actions/runs/44165925712/job/135097667416"
+          },
+          {
+            "name": "install-production (24, ubuntu-latest, 11)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify/actions/runs/44165925712/job/135097667087"
+          },
+          {
+            "name": "linkChecker",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify/actions/runs/44165925713/job/135097656299"
+          },
+          {
+            "name": "Lint Markdown",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify/actions/runs/44165925689/job/135097651324"
+          },
+          {
+            "name": "Socket Security: Pull Request Alerts",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify/runs/134331965277"
+          },
+          {
+            "name": "Socket Security: Project Report",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify/runs/134331811656"
+          },
+          {
+            "name": "label",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify/actions/runs/44165920013/job/134331811608"
+          }
+        ],
+        "awaitingApproval": [
+          "Missing Types"
+        ],
+        "summary": {
+          "total": 34,
+          "passed": 30,
+          "failed": 0,
+          "running": 0,
+          "skipped": 4
+        }
+      },
+      "stage": "merged"
+    },
+    {
+      "key": "fastify/fastify-cli#936",
+      "repo": "fastify/fastify-cli",
+      "number": 936,
+      "title": "fix: do not quote the test glob in the TypeScript template",
+      "url": "https://github.com/fastify/fastify-cli/pull/936",
+      "body": "Fixes #756\n\nThe `test` script that `generate.js` writes for `fastify generate --lang=ts` (the CommonJS TypeScript template) wraps the glob in quotes:\n\n```\nc8 node --test -r ts-node/register \"test/**/*.ts\"\n```\n\nBecause of the quotes the shell never expands the pattern, so `node --test` gets the literal string `test/**/*.ts`. Glob support in the test runner only landed in Node.js 21, so on Node.js 20 (still in the CI matrix) and older the runner looks for a file with that exact name and fails with `Could not find '.../test/**/*.ts'`, which is what the issue reports. On 22+ it happens to work because Node expands the pattern itself.\n\nThe JavaScript templates and the ESM TypeScript template already pass the glob unquoted (`test/**/*.test.js`, `test/**/*.ts`), so this just drops the quotes in `typescriptTemplate.scripts.test` to match them. With the shell expanding the pattern, the script works the same way on every Node version. A side effect is that `test/helper.ts` is no longer handed to the runner as a test file on Node 22+ (it showed up as an extra \"test\" before).\n\n`test/generate-typescript.test.js` now expects the unquoted script and also asserts that the glob is not quoted.\n\nHow I verified:\n\n`node --test test/generate-typescript.test.js` fails without the change to `generate.js` (strictEqual on the script) and passes with it. Full `npm test` passes (lint, template suites, 231 pass / 1 skipped in the CLI suite, tstyche).\n\nGenerated a project with the CLI and checked what `node` actually receives from the script's shell:\n\n```\n--- argv node receives, before (quoted):\n[ 'test/**/*.ts' ]\n--- after (unquoted):\n[\n  'test/plugins/support.test.ts',\n  'test/routes/example.test.ts',\n  'test/routes/root.test.ts'\n]\n--- npm test in the generated project (Node 26), after:\n✔ support works standalone\n✔ example is loaded\n✔ default root route\nℹ tests 3\nℹ pass 3\nℹ fail 0\n```\n\nBefore the change the same project on Node 26 reported `tests 4` because `test/helper.ts` was also run as a test file. I did not have a Node 20 binary available locally, so the literal-pattern failure on 20 is based on the argv shown above plus the Node changelog (glob support for `node --test` added in v21), not a run on 20.\n\nLeft out on purpose:\n\n- With `sh`, `**` behaves like `*`, so the expanded pattern only matches one directory level (`test/*/*.ts`). That is the same as the other templates today and covers the generated layout; I did not try to change that.\n- Separately, the generated TS project currently fails `npm run build:ts` with TypeScript 6 (`TS5011`, `rootDir` must be set) and ts-node can't find Node types in tests. That's unrelated to this issue; for the run above I pinned `typescript@5` in the scratch project.\n",
+      "draft": false,
+      "state": "open",
+      "mergedAt": null,
+      "closedAt": null,
+      "createdAt": "2026-11-18T03:47:44Z",
+      "updatedAt": "2026-11-20T07:04:55Z",
+      "branch": "fix/ts-template-test-glob",
+      "base": "main",
+      "additions": 5,
+      "deletions": 3,
+      "changedFiles": 2,
+      "mergeable": "blocked",
+      "labels": [],
+      "requestedReviewers": [],
+      "issue": {
+        "number": 756,
+        "title": "Typescript Fastify app generated with cli has error when running `npm run test`",
+        "url": "https://github.com/fastify/fastify-cli/issues/756",
+        "state": "open"
+      },
+      "reviews": [],
+      "conversation": [
+        {
+          "kind": "comment",
+          "author": {
+            "login": "mcollina",
+            "avatar": "https://avatars.githubusercontent.com/u/52195?v=4",
+            "url": "https://github.com/mcollina",
+            "bot": false,
+            "association": "MEMBER"
+          },
+          "body": "I'm relatively certain I added that to better support Windows",
+          "at": "2026-11-20T07:02:12Z",
+          "url": "https://github.com/fastify/fastify-cli/pull/936#issuecomment-7032846079"
+        },
+        {
+          "kind": "code",
+          "author": {
+            "login": "Copilot",
+            "avatar": "https://avatars.githubusercontent.com/in/946600?v=4",
+            "url": "https://github.com/apps/copilot-pull-request-reviewer",
+            "bot": true,
+            "association": "NONE"
+          },
+          "body": "Removing the quotes reintroduces the nested-test discovery bug fixed by #708: under npm's default POSIX shell, `test/**/*.ts` expands to one directory level, silently omitting files such as `test/routes/nested/deep.test.ts` even on Node 22+. Although the PR acknowledges this limitation, it removes recursive discovery that previously worked on newer Node versions. Use version-independent recursive file enumeration and add a shell-level regression test with a nested test file; the existing minimatch assertion does not exercise shell expansion.",
+          "at": "2026-11-20T07:04:54Z",
+          "url": "https://github.com/fastify/fastify-cli/pull/936#discussion_r4639485356",
+          "path": "generate.js",
+          "line": 51
+        },
+        {
+          "kind": "review",
+          "state": "COMMENTED",
+          "author": {
+            "login": "copilot-pull-request-reviewer[bot]",
+            "avatar": "https://avatars.githubusercontent.com/in/946600?v=4",
+            "url": "https://github.com/apps/copilot-pull-request-reviewer",
+            "bot": true,
+            "association": "NONE"
+          },
+          "body": "<!-- ccr-overview-v2 -->\n\n### 🟡 Changes recommended\n\nUnquoted `test/**/*.ts` undergoes POSIX shell expansion that silently omits deeply nested tests, requiring recursive file enumeration and a shell-level regression test.\n\n<details open>\n<summary><strong>1 open issue</strong></summary>\n\n- <picture><source media=\"(prefers-color-scheme: dark)\" srcset=\"https://github.githubassets.com/static/images/icons/copilot-code-review/medium-v2-dark.svg\"><source media=\"(prefers-color-scheme: light)\" srcset=\"https://github.githubassets.com/static/images/icons/copilot-code-review/medium-v2-light.svg\"><img src=\"https://github.githubassets.com/static/images/icons/copilot-code-review/medium-v2-light.png\" alt=\"Medium severity\" width=\"62\" height=\"18\" align=\"texttop\"></picture> [Restore recursive discovery of deeply nested tests](https://github.com/fastify/fastify-cli/pull/936#discussion_r4639485356) · New\n</details>\n\n<details>\n<summary><strong>What changed in this PR</strong></summary>\n\nAddresses #756 by removing quotes around the test glob generated for CommonJS TypeScript projects, allowing shell expansion on Node.js versions without native test-runner glob support.\n\n**Changes:**\n- Aligns the CommonJS TypeScript test command with the other templates’ unquoted glob.\n- Updates the expected script, adds an assertion against quoted globs, and adjusts the assertion count.\n\n| File | Description |\r\n| ---- | ----------- |\r\n| `test/​generate-typescript.test.js` | Updates script assertions and the planned assertion count. |\r\n| `generate.js` | Removes quotes around the CommonJS TypeScript test glob. |\n</details>\n\n<sub>Review effort: Balanced</sub>",
+          "at": "2026-11-20T07:04:54Z",
+          "url": "https://github.com/fastify/fastify-cli/pull/936#pullrequestreview-5988771529"
+        }
+      ],
+      "ci": {
+        "checks": [
+          {
+            "name": "test / Automerge Dependabot PRs",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/fastify/fastify-cli/actions/runs/44232898006/job/135674123754"
+          },
+          {
+            "name": "test / quality-check / Check Licenses",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/fastify/fastify-cli/actions/runs/44232898006/job/135668665985"
+          },
+          {
+            "name": "test / Test Fastify Integration",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/fastify/fastify-cli/actions/runs/44232898006/job/135668662400"
+          },
+          {
+            "name": "test / Test (22, windows-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-cli/actions/runs/44232898006/job/135668660767"
+          },
+          {
+            "name": "test / Test (26, macos-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-cli/actions/runs/44232898006/job/135668660716"
+          },
+          {
+            "name": "test / Test (22, ubuntu-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-cli/actions/runs/44232898006/job/135668660650"
+          },
+          {
+            "name": "test / Test (26, windows-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-cli/actions/runs/44232898006/job/135668660442"
+          },
+          {
+            "name": "test / Test (22, macos-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-cli/actions/runs/44232898006/job/135668660362"
+          },
+          {
+            "name": "test / quality-check / Lint Code",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-cli/actions/runs/44232898006/job/135668660361"
+          },
+          {
+            "name": "test / Test (20, windows-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-cli/actions/runs/44232898006/job/135668660358"
+          },
+          {
+            "name": "test / Test (26, ubuntu-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-cli/actions/runs/44232898006/job/135668660349"
+          },
+          {
+            "name": "test / Test (24, windows-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-cli/actions/runs/44232898006/job/135668660307"
+          },
+          {
+            "name": "test / Test (24, macos-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-cli/actions/runs/44232898006/job/135668660257"
+          },
+          {
+            "name": "test / Test (20, ubuntu-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-cli/actions/runs/44232898006/job/135668660253"
+          },
+          {
+            "name": "test / Test (20, macos-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-cli/actions/runs/44232898006/job/135668660212"
+          },
+          {
+            "name": "test / Test (24, ubuntu-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-cli/actions/runs/44232898006/job/135668660207"
+          },
+          {
+            "name": "test / quality-check / Dependency Review",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-cli/actions/runs/44232898006/job/135668659558"
+          },
+          {
+            "name": "Socket Security: Pull Request Alerts",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-cli/runs/134562055485"
+          },
+          {
+            "name": "Socket Security: Project Report",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-cli/runs/134561976984"
+          }
+        ],
+        "awaitingApproval": [],
+        "summary": {
+          "total": 19,
+          "passed": 16,
+          "failed": 0,
+          "running": 0,
+          "skipped": 3
+        }
+      },
+      "stage": "in_review"
+    },
+    {
+      "key": "fastify/fastify-multipart#657",
+      "repo": "fastify/fastify-multipart",
+      "number": 657,
+      "title": "fix: stop saveRequestFiles after a file hits the fileSize limit",
+      "url": "https://github.com/fastify/fastify-multipart/pull/657",
+      "body": "Refs #470\n\nI reproduced this on main with a real request: two 4 MB files, `limits: { fileSize: 1000 }`, the default `throwFileSizeLimit`, sent in 64 KB chunks.\n\nThe temp files themselves were never leaked. When `saveRequestFiles()` throws, its catch block already runs `cleanRequestFiles()`, so the directory was empty both after the error and after a second `cleanRequestFiles()` call. The comments were right about the other half, though: the error only came back after the whole body had been read, and the second file was fully written to disk before that.\n\nThe cause is in `saveRequestFiles()` in `index.js`. Once busboy hits `fileSize`, it marks the file stream `truncated` and ends it normally, so `pump(part.file, target)` resolves and the loop moves on to the next part. The `RequestFileTooLargeError` set by the `limit` listener is only stored as `lastError`, and the iterator hands it back when busboy finishes the request. `toBuffer()` doesn't have this problem because it checks `file.truncated` itself and throws.\n\nThe fix does the same check in `saveRequestFiles()`. After each file is written, if `part.file.truncated` is set and `throwFileSizeLimit` is on (read from the call options, otherwise the plugin default), it throws `RequestFileTooLargeError` with `err.part` set. The existing catch block then removes the partial temp file. When `throwFileSizeLimit: false`, nothing changes and truncated files are still saved.\n\nBefore (main):\n\n```\nresponse: 413 {\"code\":\"FST_REQ_FILE_TOO_LARGE\"}\nbody size: 8388994 client had sent 8454144 bytes when error surfaced\ntmp files right after error: [] (tmpUploads entries: 2)\ntmp files after cleanRequestFiles: []\ntmp files after response: []\n```\n\nAfter:\n\n```\nresponse: 413 {\"code\":\"FST_REQ_FILE_TOO_LARGE\"}\nbody size: 8388994 client had sent 4325376 bytes when error surfaced\ntmp files right after error: [] (tmpUploads entries: 1)\ntmp files after cleanRequestFiles: []\ntmp files after response: []\n```\n\n`test/fix-470.test.js` adds two tests:\n- An oversized file followed by a second file. It checks that the error is `RequestFileTooLargeError` for the right part, that only one temp file was created, that the tmpdir is empty, and that the response is a 413. It fails on main.\n- The `throwFileSizeLimit: false` case, which still saves both truncated files.\n\n`npm test` passes: lint, 124 unit tests at 100% coverage, and tstyche.\n\nWhat I left out on purpose: busboy still reads the oversized part through to its boundary before the error surfaces. With a single 3.7 GB file, the client still uploads the whole file before getting the 413. Failing at the moment the limit fires would mean either destroying the file stream mid-part and leaving the rest of the request unread, or closing the connection as suggested in the thread. Both change how the request and connection end, so I think that decision belongs with the maintainers and isn't part of this PR. That's why this says Refs and not Fixes.\n",
+      "draft": false,
+      "state": "open",
+      "mergedAt": null,
+      "closedAt": null,
+      "createdAt": "2026-11-18T03:54:58Z",
+      "updatedAt": "2026-11-18T03:54:58Z",
+      "branch": "fix/clean-temp-file-on-size-limit",
+      "base": "main",
+      "additions": 114,
+      "deletions": 0,
+      "changedFiles": 2,
+      "mergeable": "unstable",
+      "labels": [],
+      "requestedReviewers": [],
+      "issue": {
+        "number": 470,
+        "title": "cleanRequestFiles doesn't clean file when file size is reached",
+        "url": "https://github.com/fastify/fastify-multipart/issues/470",
+        "state": "open"
+      },
+      "reviews": [],
+      "conversation": [],
+      "ci": {
+        "checks": [
+          {
+            "name": "Socket Security: Pull Request Alerts",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-multipart/runs/134564719853"
+          },
+          {
+            "name": "Socket Security: Project Report",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-multipart/runs/134564647220"
+          }
+        ],
+        "awaitingApproval": [
+          "CI"
+        ],
+        "summary": {
+          "total": 2,
+          "passed": 2,
+          "failed": 0,
+          "running": 0,
+          "skipped": 0
+        }
+      },
+      "stage": "ci_approval"
+    },
+    {
+      "key": "fastify/fastify-express#212",
+      "repo": "fastify/fastify-express",
+      "number": 212,
+      "title": "fix: return injected payload when express handles the request",
+      "url": "https://github.com/fastify/fastify-express/pull/212",
+      "body": "Fixes #54\n\n`fastify.inject()` returns an empty payload for any request that goes through the express stack. That covers express routes and routers, and also plain Fastify routes once any `fastify.use()` middleware is registered. The status code and headers are correct, but the body is `''`.\n\nRoot cause: `runConnect` in `index.js` hands `req.raw`/`reply.raw` to express, and express's `app.handle` (`express/lib/application.js`) does `Object.setPrototypeOf(res, this.response)`. For an injected request, `reply.raw` is a light-my-request `Response`. Its prototype overrides `write`, `end`, `writeHead` and a few more methods to collect the payload. Once the prototype is swapped, those overrides are lost and the plain `http.ServerResponse` methods write to the mock socket instead. The existing tests that use inject only check status codes, so this never showed up.\n\nWhat changed: when `req.raw.isLightMyRequest` is set (a documented light-my-request marker), `runConnect` copies the own methods of the req/res prototype onto the instance before calling express. Express still swaps the prototype, but the instance properties shadow it, so light-my-request's methods keep working. Express's own methods (`res.json`, `res.send`, `req.get`, ...) are not affected because light-my-request doesn't define them. Requests from a real server never get this flag, so the normal HTTP path doesn't change.\n\nTests: added `test/inject.test.js`. It covers an express app route with `res.json` and a status/header, a router with `res.send` and `res.end`, a POST body parsed by `express.json()`, and a Fastify route (JSON and stream) behind an express middleware. All 5 fail without the change to `index.js` and pass with it. `npm test` passes: lint, 78 unit tests with 100% coverage, and tstyche.\n\nRepro script (fastify 5.12.8, light-my-request 6.8.0, express 5.3.0): express routes mounted with `fastify.use()`, then `fastify.inject()`:\n\nBefore:\n```\n/json 200 application/json; charset=utf-8 \"\"\n/send 201 text/plain; charset=utf-8 \"\"\n/end 200 undefined \"\"\n/app 200 application/json; charset=utf-8 \"\"\n/body 200 application/json; charset=utf-8 \"\"\n/f 200 \"\"          <- fastify route behind fastify.use((req, res, next) => next())\n```\n\nAfter:\n```\n/json 200 application/json; charset=utf-8 \"{\\\"hello\\\":\\\"world\\\"}\"\n/send 201 text/plain; charset=utf-8 \"text body\"\n/end 200 undefined \"raw end\"\n/app 200 application/json; charset=utf-8 \"{\\\"from\\\":\\\"app\\\"}\"\n/body 200 application/json; charset=utf-8 \"{\\\"a\\\":1}\"\n/f 200 \"{\\\"fastify\\\":true}\"\n```\n\nLeft out: I only copy methods from the immediate prototype of the injected req/res. That prototype is the one light-my-request builds, and it also covers its custom `Request` option, because light-my-request copies its methods onto that constructor's prototype. Methods that a user-supplied `Request` class inherits from further up its own chain are not preserved. I didn't add a README note because inject should now just work.\n",
+      "draft": false,
+      "state": "closed",
+      "mergedAt": "2026-11-22T11:41:26Z",
+      "closedAt": "2026-11-22T11:41:26Z",
+      "createdAt": "2026-11-18T03:48:18Z",
+      "updatedAt": "2026-11-22T11:41:26Z",
+      "branch": "fix/inject-with-express",
+      "base": "main",
+      "additions": 138,
+      "deletions": 0,
+      "changedFiles": 2,
+      "mergeable": "unknown",
+      "labels": [],
+      "requestedReviewers": [],
+      "issue": {
+        "number": 54,
+        "title": "When testing express application with inject, payload is always empty",
+        "url": "https://github.com/fastify/fastify-express/issues/54",
+        "state": "closed"
+      },
+      "reviews": [
+        {
+          "reviewer": {
+            "login": "mcollina",
+            "avatar": "https://avatars.githubusercontent.com/u/52195?v=4",
+            "url": "https://github.com/mcollina",
+            "bot": false,
+            "association": "MEMBER"
+          },
+          "state": "APPROVED",
+          "at": "2026-11-20T17:49:12Z"
+        },
+        {
+          "reviewer": {
+            "login": "Tony133",
+            "avatar": "https://avatars.githubusercontent.com/u/11542387?u=4be9af77bb81859d65c2cfa0ecd305068119e9d4&v=4",
+            "url": "https://github.com/Tony133",
+            "bot": false,
+            "association": "MEMBER"
+          },
+          "state": "APPROVED",
+          "at": "2026-11-22T11:40:40Z"
+        }
+      ],
+      "conversation": [
+        {
+          "kind": "comment",
+          "author": {
+            "login": "prkomb",
+            "avatar": "https://avatars.githubusercontent.com/u/201654390?v=4",
+            "url": "https://github.com/prkomb",
+            "bot": false,
+            "association": "CONTRIBUTOR"
+          },
+          "body": "I'd been looking at #54 as well and ended up with the same idea, so here's what I checked on 5c7f580:\n\n- `npm test` passes on Node 22 and 24 (78 tests, 100% coverage), and so does `npm run lint`. With `index.js` from `main`, all five tests in `test/inject.test.js` fail, so they do catch the bug.\n- Under `inject` with this change, these come back with the right body too: a sub-app mounted with `app.use('/mounted', subApp)`, `res.write()` followed by `res.end()`, `payloadAsStream: true`, and the plugin registered with `createProxyHandler`.\n- On Node 26.13.0 the only failures are the three `createProxyHandler` tests, which fail on `main` too. That's a crash with `createProxyHandler` on Node 26.11 and later, unrelated to this PR; the fix is in #213. With both applied, all 79 tests pass on 26.11.0 and 26.13.0.\n",
+          "at": "2026-11-18T20:26:46Z",
+          "url": "https://github.com/fastify/fastify-express/pull/212#issuecomment-6990643341"
+        },
+        {
+          "kind": "review",
+          "state": "APPROVED",
+          "author": {
+            "login": "mcollina",
+            "avatar": "https://avatars.githubusercontent.com/u/52195?v=4",
+            "url": "https://github.com/mcollina",
+            "bot": false,
+            "association": "MEMBER"
+          },
+          "body": "lgtm",
+          "at": "2026-11-20T17:17:44Z",
+          "url": "https://github.com/fastify/fastify-express/pull/212#pullrequestreview-5996625362"
+        },
+        {
+          "kind": "review",
+          "state": "APPROVED",
+          "author": {
+            "login": "mcollina",
+            "avatar": "https://avatars.githubusercontent.com/u/52195?v=4",
+            "url": "https://github.com/mcollina",
+            "bot": false,
+            "association": "MEMBER"
+          },
+          "body": "lgtm",
+          "at": "2026-11-20T17:49:12Z",
+          "url": "https://github.com/fastify/fastify-express/pull/212#pullrequestreview-5997058549"
+        },
+        {
+          "kind": "comment",
+          "author": {
+            "login": "Tony133",
+            "avatar": "https://avatars.githubusercontent.com/u/11542387?v=4",
+            "url": "https://github.com/Tony133",
+            "bot": false,
+            "association": "MEMBER"
+          },
+          "body": "CI is red ",
+          "at": "2026-11-21T15:33:02Z",
+          "url": "https://github.com/fastify/fastify-express/pull/212#issuecomment-7064963449"
+        },
+        {
+          "kind": "comment",
+          "author": {
+            "login": "prkomb",
+            "avatar": "https://avatars.githubusercontent.com/u/201654390?v=4",
+            "url": "https://github.com/prkomb",
+            "bot": false,
+            "association": "CONTRIBUTOR"
+          },
+          "body": "The red job is `Test (22, windows-latest)`, and its three failures look like the Windows flake fixed in #215: two tests in `absolute-form-url.test.js` and one in `url-encoding.test.js`, all failing in the raw-socket helpers with `Cannot read properties of null (reading '1')`. That run tested a merge with 6d3e9a2, the commit just before #215 landed, so it still had the old `socket.end()` helpers. A plain re-run would probably test the same merge commit again (the job checks out e2aa57a by its SHA), so updating the branch from `main` should be what turns it green. Merged with current `main` (bf0808c), `npm test` passes here on Linux with Node 22, 24 and 26 (126/126) and lint is clean. I can't run the Windows job locally, but nothing in this PR looks like it needs to change.\n",
+          "at": "2026-11-22T00:45:42Z",
+          "url": "https://github.com/fastify/fastify-express/pull/212#issuecomment-7071762422"
+        },
+        {
+          "kind": "review",
+          "state": "APPROVED",
+          "author": {
+            "login": "Tony133",
+            "avatar": "https://avatars.githubusercontent.com/u/11542387?u=4be9af77bb81859d65c2cfa0ecd305068119e9d4&v=4",
+            "url": "https://github.com/Tony133",
+            "bot": false,
+            "association": "MEMBER"
+          },
+          "body": "lgtm\n",
+          "at": "2026-11-22T11:40:40Z",
+          "url": "https://github.com/fastify/fastify-express/pull/212#pullrequestreview-6012022603"
+        }
+      ],
+      "ci": {
+        "checks": [
+          {
+            "name": "test / Automerge Dependabot PRs",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/fastify/fastify-express/actions/runs/45018312005/job/137195846550"
+          },
+          {
+            "name": "Socket Security: Pull Request Alerts",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-express/runs/137195426541"
+          },
+          {
+            "name": "test / Test Fastify Integration",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/fastify/fastify-express/actions/runs/45018312005/job/137195391214"
+          },
+          {
+            "name": "test / Test (20, windows-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-express/actions/runs/45018312005/job/137195390609"
+          },
+          {
+            "name": "test / Test (24, macos-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-express/actions/runs/45018312005/job/137195390579"
+          },
+          {
+            "name": "test / Test (24, windows-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-express/actions/runs/45018312005/job/137195390525"
+          },
+          {
+            "name": "test / Test (26, ubuntu-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-express/actions/runs/45018312005/job/137195390509"
+          },
+          {
+            "name": "test / quality-check / Lint Code",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-express/actions/runs/45018312005/job/137195390465"
+          },
+          {
+            "name": "test / Test (22, macos-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-express/actions/runs/45018312005/job/137195390438"
+          },
+          {
+            "name": "test / Test (20, macos-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-express/actions/runs/45018312005/job/137195390433"
+          },
+          {
+            "name": "test / Test (26, macos-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-express/actions/runs/45018312005/job/137195390426"
+          },
+          {
+            "name": "test / quality-check / Dependency Review",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-express/actions/runs/45018312005/job/137195390420"
+          },
+          {
+            "name": "test / Test (26, windows-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-express/actions/runs/45018312005/job/137195390409"
+          },
+          {
+            "name": "test / quality-check / Check Licenses",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-express/actions/runs/45018312005/job/137195390404"
+          },
+          {
+            "name": "test / Test (22, ubuntu-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-express/actions/runs/45018312005/job/137195390398"
+          },
+          {
+            "name": "test / Test (24, ubuntu-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-express/actions/runs/45018312005/job/137195390388"
+          },
+          {
+            "name": "test / Test (22, windows-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-express/actions/runs/45018312005/job/137195390384"
+          },
+          {
+            "name": "test / Test (20, ubuntu-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-express/actions/runs/45018312005/job/137195390233"
+          },
+          {
+            "name": "Socket Security: Project Report",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-express/runs/137195368057"
+          }
+        ],
+        "awaitingApproval": [],
+        "summary": {
+          "total": 19,
+          "passed": 17,
+          "failed": 0,
+          "running": 0,
+          "skipped": 2
+        }
+      },
+      "stage": "merged"
+    },
+    {
+      "key": "fastify/fastify-secure-session#308",
+      "repo": "fastify/fastify-secure-session",
+      "number": 308,
+      "title": "feat: add serializer option for session data",
+      "url": "https://github.com/fastify/fastify-secure-session/pull/308",
+      "body": "Fixes #278\n\nSession data goes through a hardcoded `JSON.stringify` in `encodeSecureSession` and `JSON.parse` in `decodeSecureSession` (index.js). Putting a BigInt in the session makes `JSON.stringify` throw `TypeError: Do not know how to serialize a BigInt`, and the request ends in a 500. There was no way to change how the data is encoded.\n\nI didn't change the default encoding. Turning BigInts into strings by default (as #307 tried) would mean they come back as strings, and that changes what's stored for everyone. Instead this adds an opt-in `serializer` option:\n\n```js\nfastify.register(require('@fastify/secure-session'), {\n  key,\n  serializer: {\n    stringify: (data) => JSON.stringify(data, (_key, value) =>\n      typeof value === 'bigint' ? { $bigint: value.toString() } : value),\n    parse: (text) => JSON.parse(text, (_key, value) =>\n      value !== null && typeof value === 'object' && typeof value.$bigint === 'string'\n        ? BigInt(value.$bigint)\n        : value)\n  }\n})\n```\n\nChanges:\n- `index.js`: each session's options take `serializer` (default `JSON`). It's stored with the session's key and expiry and used by `encodeSecureSession` / `decodeSecureSession`. Registration fails with `serializer must have stringify and parse functions` if either function is missing. `parse` gets the decrypted message as a string.\n- `types/index.d.ts`: new `SessionSerializer` interface and an optional `serializer` field on `SecureSessionPluginOptions`.\n- `README.md`: a \"Custom serializer\" section with the BigInt example and two caveats: `__ts` has to round-trip as a number, and if you switch serializers, `parse` still has to read old cookies.\n- `test/serializer.test.js`: tests a BigInt round trip through real requests (top-level and nested), checks that the encode/decode decorators call the serializer, checks per-session serializers with multiple sessions, and checks the validation error. Type tests are in `types/index.tst.ts`.\n\nVerification. Repro script: a POST route sets `9007199254740993n`, and a GET route reads it back from the cookie.\n\nBefore (main) and after with no `serializer`, which is unchanged:\n```\nPOST 500 Do not know how to serialize a BigInt\n```\n\nAfter, with the serializer above:\n```\nPOST 200 set-cookie present: true\nGET 200 {\"type\":\"bigint\",\"value\":\"9007199254740993\"}\n```\n\nWith index.js reverted, all 4 new tests fail. With types/index.d.ts reverted, the type tests fail. `npm test` passes: 54 unit tests with 100% coverage, 18 tstyche assertions. Lint is clean.\n\nLeft out on purpose: there's no built-in BigInt encoding, and I didn't catch errors thrown by a custom `parse`. Those errors propagate the same way a `JSON.parse` failure would today.\n",
+      "draft": false,
+      "state": "open",
+      "mergedAt": null,
+      "closedAt": null,
+      "createdAt": "2026-11-18T03:56:32Z",
+      "updatedAt": "2026-11-18T03:56:32Z",
+      "branch": "feat/custom-session-serializer",
+      "base": "main",
+      "additions": 180,
+      "deletions": 6,
+      "changedFiles": 5,
+      "mergeable": "clean",
+      "labels": [],
+      "requestedReviewers": [],
+      "issue": {
+        "number": 278,
+        "title": "Support for bigint",
+        "url": "https://github.com/fastify/fastify-secure-session/issues/278",
+        "state": "open"
+      },
+      "reviews": [],
+      "conversation": [],
+      "ci": {
+        "checks": [
+          {
+            "name": "test / Automerge Dependabot PRs",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/fastify/fastify-secure-session/actions/runs/44233879926/job/140011661735"
+          },
+          {
+            "name": "test / Test Fastify Integration",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/fastify/fastify-secure-session/actions/runs/44233879926/job/140007773846"
+          },
+          {
+            "name": "test / Test (20, windows-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-secure-session/actions/runs/44233879926/job/140007771857"
+          },
+          {
+            "name": "test / Test (26, macos-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-secure-session/actions/runs/44233879926/job/140007771852"
+          },
+          {
+            "name": "test / Test (24, macos-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-secure-session/actions/runs/44233879926/job/140007771752"
+          },
+          {
+            "name": "test / Test (24, windows-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-secure-session/actions/runs/44233879926/job/140007771719"
+          },
+          {
+            "name": "test / Test (22, macos-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-secure-session/actions/runs/44233879926/job/140007771718"
+          },
+          {
+            "name": "test / quality-check / Check Licenses",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-secure-session/actions/runs/44233879926/job/140007771704"
+          },
+          {
+            "name": "test / Test (22, windows-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-secure-session/actions/runs/44233879926/job/140007771678"
+          },
+          {
+            "name": "test / Test (26, windows-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-secure-session/actions/runs/44233879926/job/140007771661"
+          },
+          {
+            "name": "test / quality-check / Dependency Review",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-secure-session/actions/runs/44233879926/job/140007771641"
+          },
+          {
+            "name": "test / Test (24, ubuntu-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-secure-session/actions/runs/44233879926/job/140007771623"
+          },
+          {
+            "name": "test / Test (20, macos-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-secure-session/actions/runs/44233879926/job/140007771610"
+          },
+          {
+            "name": "test / Test (26, ubuntu-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-secure-session/actions/runs/44233879926/job/140007771604"
+          },
+          {
+            "name": "test / Test (20, ubuntu-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-secure-session/actions/runs/44233879926/job/140007771506"
+          },
+          {
+            "name": "test / Test (22, ubuntu-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-secure-session/actions/runs/44233879926/job/140007771382"
+          },
+          {
+            "name": "test / quality-check / Lint Code",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-secure-session/actions/runs/44233879926/job/140007771079"
+          },
+          {
+            "name": "Socket Security: Pull Request Alerts",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-secure-session/runs/134565278771"
+          },
+          {
+            "name": "Socket Security: Project Report",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-secure-session/runs/134565201876"
+          }
+        ],
+        "awaitingApproval": [],
+        "summary": {
+          "total": 19,
+          "passed": 17,
+          "failed": 0,
+          "running": 0,
+          "skipped": 2
+        }
+      },
+      "stage": "in_review"
+    },
+    {
+      "key": "fastify/fastify-jwt#444",
+      "repo": "fastify/fastify-jwt",
+      "number": 444,
+      "title": "docs: explain typing a custom decoratorName in TypeScript",
+      "url": "https://github.com/fastify/fastify-jwt/pull/444",
+      "body": "Fixes #344\n\nWhen the plugin is registered with `decoratorName: 'jwtUser'`, the decoded token is stored on `request.jwtUser`, but nothing in the types knows about that property, and the README did not say how to declare it. The snippet in the issue does two things that look reasonable but have no effect:\n\n- it augments `FastifyRequest` inside `declare module '@fastify/jwt'`. `FastifyRequest` belongs to the `fastify` module (types/index.d.ts augments it there), so this declares an unrelated, unused interface.\n- it adds a `jwtUser` key to `FastifyJWT`. `UserType` in types/index.d.ts only reads the `user` key, which is the name of the user type, not the decorator.\n\nThere is no typing bug in `types/index.d.ts`; the property name is a runtime option the types cannot follow, so the fix is documentation.\n\nChanges:\n\n- README, TypeScript section: new \"Custom decorator name\" subsection showing `FastifyRequest` augmented in `fastify`, and explaining that `user` in `FastifyJWT` keeps that name whatever `decoratorName` is (it still types `formatUser`'s return value). The `decoratorName` option section links to it.\n- `types/decorator-name.tst.ts`: tstyche test for the documented setup (`request.jwtUser` typed, `jwtSign` payload type, `formatUser` input/return checked against `FastifyJWT`).\n\nVerification\n\nIssue snippet, as a tstyche test on main:\n\n```\nfail ./types/repro.tst.ts\nError: Property 'jwtUser' does not exist on type 'FastifyRequest<RouteGenericInterface, ...>'. ts(2339)\n```\n\nThe README snippet extracted verbatim into a `.d.ts` + `.ts` pair and checked with `tsc --strict`, resolving `@fastify/jwt` to `types/index.d.ts`:\n\n```\ntsc exit 0\n```\n\nSame files with `declare module \"fastify\"` switched to `declare module \"@fastify/jwt\"` (the issue's variant):\n\n```\nreadme-check/index.ts(12,11): error TS2339: Property 'jwtUser' does not exist on type 'FastifyRequest<...>'.\ntsc exit (issue variant) 2\n```\n\nThe new type test also fails (2 of 6 assertions) if its `fastify` augmentation is moved into `@fastify/jwt`. `npm test`: lint clean, 201/201 unit tests, 100% coverage, 3 type test files / 52 assertions passing.\n\nLeft out: `request.user` stays declared on `FastifyRequest` even when a custom `decoratorName` is used (it is just not set at runtime). Removing it would need the decorator name to flow into the types, which is a design change rather than a docs fix; the README notes the behaviour instead.\n",
+      "draft": false,
+      "state": "open",
+      "mergedAt": null,
+      "closedAt": null,
+      "createdAt": "2026-11-18T03:54:24Z",
+      "updatedAt": "2026-11-23T15:13:59Z",
+      "branch": "docs/typescript-custom-decorator-name",
+      "base": "main",
+      "additions": 88,
+      "deletions": 0,
+      "changedFiles": 2,
+      "mergeable": "clean",
+      "labels": [],
+      "requestedReviewers": [],
+      "issue": {
+        "number": 344,
+        "title": "Using a different decorator name with TypeScript",
+        "url": "https://github.com/fastify/fastify-jwt/issues/344",
+        "state": "open"
+      },
+      "reviews": [
+        {
+          "reviewer": {
+            "login": "Tony133",
+            "avatar": "https://avatars.githubusercontent.com/u/11542387?u=4be9af77bb81859d65c2cfa0ecd305068119e9d4&v=4",
+            "url": "https://github.com/Tony133",
+            "bot": false,
+            "association": "MEMBER"
+          },
+          "state": "APPROVED",
+          "at": "2026-11-23T15:13:59Z"
+        }
+      ],
+      "conversation": [
+        {
+          "kind": "review",
+          "state": "APPROVED",
+          "author": {
+            "login": "Tony133",
+            "avatar": "https://avatars.githubusercontent.com/u/11542387?u=4be9af77bb81859d65c2cfa0ecd305068119e9d4&v=4",
+            "url": "https://github.com/Tony133",
+            "bot": false,
+            "association": "MEMBER"
+          },
+          "body": "LGTM\n\nOne suggestion: use the exported `UserType` in the README example, so the shape isn't written twice:\n\n```ts\nimport { UserType } from '@fastify/jwt'\n\ndeclare module 'fastify' {\n  interface FastifyRequest {\n    jwtUser: UserType\n  }\n}\n```\n\nSame in `types/decorator-name.tst.ts`, so the test matches the docs.",
+          "at": "2026-11-23T15:13:59Z",
+          "url": "https://github.com/fastify/fastify-jwt/pull/444#pullrequestreview-6024123509"
+        }
+      ],
+      "ci": {
+        "checks": [
+          {
+            "name": "test / Automerge Dependabot PRs",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/fastify/fastify-jwt/actions/runs/44233646270/job/135481020428"
+          },
+          {
+            "name": "test / Test Fastify Integration",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/fastify/fastify-jwt/actions/runs/44233646270/job/135479905130"
+          },
+          {
+            "name": "test / Test (24, windows-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-jwt/actions/runs/44233646270/job/135479903151"
+          },
+          {
+            "name": "test / Test (26, ubuntu-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-jwt/actions/runs/44233646270/job/135479903092"
+          },
+          {
+            "name": "test / Test (20, windows-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-jwt/actions/runs/44233646270/job/135479903075"
+          },
+          {
+            "name": "test / Test (22, macos-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-jwt/actions/runs/44233646270/job/135479903064"
+          },
+          {
+            "name": "test / Test (22, ubuntu-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-jwt/actions/runs/44233646270/job/135479903036"
+          },
+          {
+            "name": "test / Test (20, ubuntu-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-jwt/actions/runs/44233646270/job/135479903013"
+          },
+          {
+            "name": "test / Test (24, macos-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-jwt/actions/runs/44233646270/job/135479903007"
+          },
+          {
+            "name": "test / Test (26, macos-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-jwt/actions/runs/44233646270/job/135479902995"
+          },
+          {
+            "name": "test / Test (24, ubuntu-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-jwt/actions/runs/44233646270/job/135479902993"
+          },
+          {
+            "name": "test / Test (22, windows-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-jwt/actions/runs/44233646270/job/135479902965"
+          },
+          {
+            "name": "test / Test (20, macos-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-jwt/actions/runs/44233646270/job/135479902933"
+          },
+          {
+            "name": "test / quality-check / Lint Code",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-jwt/actions/runs/44233646270/job/135479902921"
+          },
+          {
+            "name": "test / Test (26, windows-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-jwt/actions/runs/44233646270/job/135479902919"
+          },
+          {
+            "name": "test / quality-check / Check Licenses",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-jwt/actions/runs/44233646270/job/135479902834"
+          },
+          {
+            "name": "test / quality-check / Dependency Review",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-jwt/actions/runs/44233646270/job/135479902462"
+          },
+          {
+            "name": "Socket Security: Pull Request Alerts",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-jwt/runs/134564520958"
+          },
+          {
+            "name": "Socket Security: Project Report",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-jwt/runs/134564440717"
+          }
+        ],
+        "awaitingApproval": [],
+        "summary": {
+          "total": 19,
+          "passed": 17,
+          "failed": 0,
+          "running": 0,
+          "skipped": 2
+        }
+      },
+      "stage": "reply_needed"
+    },
+    {
+      "key": "fastify/fastify-oauth2#354",
+      "repo": "fastify/fastify-oauth2",
+      "number": 354,
+      "title": "feat: allow callbackUriParams to be a function of the request",
+      "url": "https://github.com/fastify/fastify-oauth2/pull/354",
+      "body": "Fixes #306\n\n`callbackUriParams` is only accepted as a static object (`index.js`, the option check in `fastifyOauth2` and the `urlOptions` built in `generateAuthorizationUriCallbacked`). That makes it impossible to put per-request values such as `login_hint` into the authorization uri that `startRedirectPath` redirects to. The only per-request hook that exists is the internal `kGenerateCallbackUriParams` symbol used by the Apple configuration, which isn't public and can't be set when using `discovery`. The current workaround is to drop `startRedirectPath`, call `generateAuthorizationUri` in your own route and edit the returned URL by hand.\n\nThis follows what #258 did for `callbackUri`: `callbackUriParams` can now also be a `(request) => object` function. It is called each time an authorization uri is generated (both for `startRedirectPath` and `generateAuthorizationUri`), and its result goes through the provider-specific hook as before, so Apple still gets `response_mode=form_post`. Passing an object works exactly as before.\n\nChanges:\n- `index.js`: accept a function in the option check, resolve it with the request before building the url options.\n- `types/index.d.ts`: `callbackUriParams?: Object | ((req: FastifyRequest) => Object)`.\n- README: short example using `login_hint` from a cookie with discovery.\n- Tests: function used via `startRedirectPath` (two requests, different hints), via `generateAuthorizationUri`, and together with the Apple provider hook; type test for the function form.\n\nVerified with `npm test` (lint, unit with 100% coverage, tstyche). New tests run against the unchanged `index.js`:\n\n```\n✔ options.callbackUriParams should be an object\n✔ options.callbackUriParams\n✖ options.callbackUriParams as a function\n✖ options.callbackUriParams as a function with generateAuthorizationUri\n✖ options.callbackUriParams as a function keeps provider specific params\n  Error: options.callbackUriParams should be a object\n```\n\nWith the change:\n\n```\n✔ options.callbackUriParams should be an object\n✔ options.callbackUriParams\n✔ options.callbackUriParams as a function\n✔ options.callbackUriParams as a function with generateAuthorizationUri\n✔ options.callbackUriParams as a function keeps provider specific params\nℹ tests 109\nℹ pass 109\nℹ fail 0\n```\n\nLeft out on purpose: async functions (kept sync like `callbackUri`), and a separate public `generateCallbackUriParams(params, request, scope, state)` option. The function form covers the use case in the issue; happy to add the other one if you'd prefer that shape. The validation error message changed from \"should be a object\" to \"should be a object or a function\".\n",
+      "draft": false,
+      "state": "open",
+      "mergedAt": null,
+      "closedAt": null,
+      "createdAt": "2026-11-18T03:55:46Z",
+      "updatedAt": "2026-11-18T03:55:46Z",
+      "branch": "feat/per-request-authorization-params",
+      "base": "main",
+      "additions": 164,
+      "deletions": 6,
+      "changedFiles": 5,
+      "mergeable": "unstable",
+      "labels": [],
+      "requestedReviewers": [],
+      "issue": {
+        "number": 306,
+        "title": "Further tuning of generateAuthorizationUri",
+        "url": "https://github.com/fastify/fastify-oauth2/issues/306",
+        "state": "open"
+      },
+      "reviews": [],
+      "conversation": [],
+      "ci": {
+        "checks": [
+          {
+            "name": "Socket Security: Pull Request Alerts",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-oauth2/runs/134565009217"
+          },
+          {
+            "name": "Socket Security: Project Report",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-oauth2/runs/134564953868"
+          }
+        ],
+        "awaitingApproval": [
+          "CI"
+        ],
+        "summary": {
+          "total": 2,
+          "passed": 2,
+          "failed": 0,
+          "running": 0,
+          "skipped": 0
+        }
+      },
+      "stage": "ci_approval"
+    },
+    {
+      "key": "fastify/fastify-autoload#539",
+      "repo": "fastify/fastify-autoload",
+      "number": 539,
+      "title": "fix: detect TypeScript loaders preloaded with require()",
+      "url": "https://github.com/fastify/fastify-autoload/pull/539",
+      "body": "Fixes #404\n\n`lib/runtime.js` decides whether `.ts` files can be loaded. For `@swc/register`, `@swc-node/register`, `tsm` and `esbuild-register` it only checks `process._preload_modules` (`checkPreloadModules`). Node fills that list only for its own `-r`/`--require` flag. `fastify start -r @swc-node/register` preloads the module with a plain `require()`, so the loader is active but autoload doesn't see it and skips `.ts` files unless `FASTIFY_AUTOLOAD_TYPESCRIPT` is set.\n\nAs suggested in the issue, I added a fallback that checks `require.cache`:\n\n- `checkPreloadModules` now falls back to `checkRequireCache`. On first use, `checkRequireCache` collects the package names of everything in `require.cache` into a `Set`, so the cache keys are scanned once per process. Each runtime getter is already cached, so in practice this runs once.\n- The package name is taken from the innermost `node_modules` segment and handles both `/` and `\\`. That means pnpm's `.pnpm/.../node_modules/@swc-node/register/...` layout and Windows paths work, and it does not depend on `process.cwd()`. That was one of the concerns raised on #406.\n- The existing checks still run first and haven't changed. The only new fallback outside `checkPreloadModules` is on `tsx`, because `-r tsx/cjs` has the same problem.\n- Matching is on exact package names, so `@swc/core`, `esbuild` or `tsm-utils` being loaded does not enable TypeScript support.\n\nThe code runs inside the CJS module itself, so `require.cache` is available even when the app is ESM. That was the other concern raised on #406.\n\nHow I verified it: the repro script below simulates the fastify-cli preload with `require()`. I ran it with `--no-experimental-strip-types` so that native type stripping on recent Node doesn't hide the result:\n\n```js\nconst root = process.argv[2]\nrequire(require.resolve('@swc-node/register', { paths: [root] }))\nconst runtime = require(root + '/lib/runtime')\nconsole.log('_preload_modules:', JSON.stringify(process._preload_modules))\nconsole.log('runtime.swc:', runtime.swc, 'supportTypeScript:', runtime.supportTypeScript)\n```\n\nBefore:\n```\n_preload_modules: []\nruntime.swc: false supportTypeScript: false\n```\n\nAfter:\n```\n_preload_modules: []\nruntime.swc: true supportTypeScript: true\n```\n\nThe new tests in `test/issues/404/test.js` cover these cases:\n\n- a real `require('@swc-node/register')`\n- cache entries for `@swc/register`, `tsm`, `esbuild-register` and `tsx`\n- a pnpm layout\n- a Windows path\n- negative cases with similarly named packages\n\nEach case runs in a child process because the runtime checks are cached per process. Coverage is turned off for those children so they don't skew the report. Without the change in `lib/runtime.js`, 5 of the 6 tests fail; the negative case passes either way. `npm test` passes, including lint, tstyche, the loader scripts, jest, vitest and borp, with coverage still at 100%.\n\nNot included: no changes to fastify-cli, and no README change. The `FASTIFY_AUTOLOAD_TYPESCRIPT` override is still documented and still works.\n",
+      "draft": false,
+      "state": "open",
+      "mergedAt": null,
+      "closedAt": null,
+      "createdAt": "2026-11-18T03:46:47Z",
+      "updatedAt": "2026-11-18T03:46:47Z",
+      "branch": "fix/detect-ts-loader-in-require-cache",
+      "base": "main",
+      "additions": 123,
+      "deletions": 2,
+      "changedFiles": 2,
+      "mergeable": "clean",
+      "labels": [],
+      "requestedReviewers": [],
+      "issue": {
+        "number": 404,
+        "title": "Cannot detect `@swc-node/register` loaded by `fastify-cli` with the `-r` option",
+        "url": "https://github.com/fastify/fastify-autoload/issues/404",
+        "state": "open"
+      },
+      "reviews": [],
+      "conversation": [],
+      "ci": {
+        "checks": [
+          {
+            "name": "test / Automerge Dependabot PRs",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/fastify/fastify-autoload/actions/runs/44232791795/job/134918394046"
+          },
+          {
+            "name": "test / Test Fastify Integration",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/fastify/fastify-autoload/actions/runs/44232791795/job/134913189631"
+          },
+          {
+            "name": "test / Test (24, ubuntu-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-autoload/actions/runs/44232791795/job/134913188726"
+          },
+          {
+            "name": "test / Test (22, windows-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-autoload/actions/runs/44232791795/job/134913188559"
+          },
+          {
+            "name": "test / Test (22, macos-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-autoload/actions/runs/44232791795/job/134913188476"
+          },
+          {
+            "name": "test / Test (20, ubuntu-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-autoload/actions/runs/44232791795/job/134913188446"
+          },
+          {
+            "name": "test / Test (22, ubuntu-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-autoload/actions/runs/44232791795/job/134913188428"
+          },
+          {
+            "name": "test / Test (24, macos-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-autoload/actions/runs/44232791795/job/134913188402"
+          },
+          {
+            "name": "test / quality-check / Dependency Review",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-autoload/actions/runs/44232791795/job/134913188143"
+          },
+          {
+            "name": "test / Test (20, windows-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-autoload/actions/runs/44232791795/job/134913188095"
+          },
+          {
+            "name": "test / quality-check / Check Licenses",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-autoload/actions/runs/44232791795/job/134913187971"
+          },
+          {
+            "name": "test / quality-check / Lint Code",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-autoload/actions/runs/44232791795/job/134913187500"
+          },
+          {
+            "name": "bun",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-autoload/actions/runs/44232791795/job/134913187415"
+          },
+          {
+            "name": "test / Test (26, ubuntu-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-autoload/actions/runs/44232791795/job/134913187390"
+          },
+          {
+            "name": "test / Test (20, macos-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-autoload/actions/runs/44232791795/job/134913187279"
+          },
+          {
+            "name": "test / Test (24, windows-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-autoload/actions/runs/44232791795/job/134913187256"
+          },
+          {
+            "name": "test / Test (26, macos-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-autoload/actions/runs/44232791795/job/134913187220"
+          },
+          {
+            "name": "test / Test (26, windows-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-autoload/actions/runs/44232791795/job/134913187203"
+          },
+          {
+            "name": "deno",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-autoload/actions/runs/44232791795/job/134913187148"
+          },
+          {
+            "name": "Socket Security: Pull Request Alerts",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-autoload/runs/134561709040"
+          },
+          {
+            "name": "Socket Security: Project Report",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/fastify-autoload/runs/134561636487"
+          }
+        ],
+        "awaitingApproval": [],
+        "summary": {
+          "total": 21,
+          "passed": 19,
+          "failed": 0,
+          "running": 0,
+          "skipped": 2
+        }
+      },
+      "stage": "in_review"
+    },
+    {
+      "key": "fastify/env-schema#249",
+      "repo": "fastify/env-schema",
+      "number": 249,
+      "title": "docs: show how to type separator properties as string[]",
+      "url": "https://github.com/fastify/env-schema/pull/249",
+      "body": "Fixes #157\n\nThe `separator` keyword (`index.js`, `separator.compile`) replaces the string value with `data.split(separator)` (or `[]` for an empty string), so the property ends up as `string[]` even though the schema says `type: 'string'`. The README never said how to type that.\n\nThe types don't need to change. `EnvSchemaOpt<T>['schema']` is `JSONSchemaType<T> | AnySchema`, so a plain schema object is accepted whatever `T` is, and `envSchema<{ ALLOWED_HOSTS: string[] }>(...)` returns `string[]` for that key. The error in the issue (`Type '\"string\"' is not assignable to type '\"array\"'`) comes from TypeScript 5.1 and older checking the inline literal against the `JSONSchemaType<T>` member of that union. From TypeScript 5.2 on, the issue's own snippet compiles unchanged against the current `types/index.d.ts`:\n\n```\nTS 4.9.5  current d.ts: a.ts(8,38): error TS2322: Type '\"string\"' is not assignable to type '\"array\"'.\nTS 5.1.6  current d.ts: a.ts(8,38): error TS2322: Type '\"string\"' is not assignable to type '\"array\"'.\nTS 5.2.2  current d.ts: (no errors)\nTS 5.3.3  current d.ts: (no errors)\nTS 5.9.3  current d.ts: (no errors)\nTS 6.0.3  current d.ts: (no errors)\n```\n\nOn 5.1 and older, declaring the schema as a separate `const` and passing it to `envSchema<Env>({ schema })` avoids the error.\n\n## Changes\n\n- README, TypeScript section: an example passing an interface with `ALLOWED_HOSTS: string[]` and a typebox example using `Type.Unsafe<string[]>({ type: 'string', separator: ',' })`. It also says what you get for an empty or unset value.\n- `types/index.tst.ts`: type tests for both patterns, checking that `ALLOWED_HOSTS` is `string[]`.\n\n## Verification\n\nRuntime behaviour on the default branch, which the README note describes:\n\n```\nH='a,b'                              {\"H\":[\"a\",\"b\"]}\nH='a'                                {\"H\":[\"a\"]}\nH='' (empty)                         {\"H\":[]}\nH='a,,b,'                            {\"H\":[\"a\",\"\",\"b\",\"\"]}\nH=' a , b '                          {\"H\":[\" a \",\" b \"]}\nH missing, optional                  {}\nH missing, required                  throws: env must have required property 'H'\nH missing, default 'x,y'             {\"H\":[\"x\",\"y\"]}\nH='' required                        {\"H\":[]}\n```\n\nSo an unset optional variable with no default is left out of `config` entirely, not turned into `[]`. That is why the README says to make the property optional in that case.\n\nThe new type tests pass. If I change the expectation to `string`, both fail with `Type 'string[]' is not the same as type 'string'`, so they really check the array type.\n\n`npm run lint` is clean and `npm test` passes: 48/48 unit tests with 100% coverage, and 23/23 tstyche assertions.\n\nI also checked json-schema-to-ts 3.1.1 separately. `FromSchema` gives `string` for the property, and `FromSchema<typeof schema, { deserialize: [{ pattern: { type: 'string', separator: ',' }, output: string[] }] }>` gives `string[]`. I didn't add that to the README because it has no json-schema-to-ts section and the package isn't a dev dependency.\n\nLeft out on purpose: no changes to `types/index.d.ts`, and no attempt to make `JSONSchemaType<T>` itself accept `type: 'string'` for a `string[]` field. That would mean replacing ajv's type, which is a design decision.\n",
+      "draft": false,
+      "state": "closed",
+      "mergedAt": "2026-11-19T15:57:34Z",
+      "closedAt": "2026-11-19T15:57:34Z",
+      "createdAt": "2026-11-18T03:57:17Z",
+      "updatedAt": "2026-11-19T15:57:34Z",
+      "branch": "docs/typing-separator-arrays",
+      "base": "main",
+      "additions": 77,
+      "deletions": 0,
+      "changedFiles": 2,
+      "mergeable": "unknown",
+      "labels": [],
+      "requestedReviewers": [],
+      "issue": {
+        "number": 157,
+        "title": "Typing `separator` with an array instead of just string",
+        "url": "https://github.com/fastify/env-schema/issues/157",
+        "state": "closed"
+      },
+      "reviews": [
+        {
+          "reviewer": {
+            "login": "Tony133",
+            "avatar": "https://avatars.githubusercontent.com/u/11542387?u=4be9af77bb81859d65c2cfa0ecd305068119e9d4&v=4",
+            "url": "https://github.com/Tony133",
+            "bot": false,
+            "association": "MEMBER"
+          },
+          "state": "APPROVED",
+          "at": "2026-11-19T15:40:49Z"
+        }
+      ],
+      "conversation": [
+        {
+          "kind": "code",
+          "author": {
+            "login": "Tony133",
+            "avatar": "https://avatars.githubusercontent.com/u/11542387?v=4",
+            "url": "https://github.com/Tony133",
+            "bot": false,
+            "association": "MEMBER"
+          },
+          "body": "```suggestion\noptional (`ALLOWED_HOSTS?: string[]`) in that case.\n\nTyping the property as `string[]` with an interface requires TypeScript 5.2 or newer.\nOlder versions report `Type '\"string\"' is not assignable to type '\"array\"'`.\n```",
+          "at": "2026-11-19T15:37:27Z",
+          "url": "https://github.com/fastify/env-schema/pull/249#discussion_r4631042556",
+          "path": "README.md",
+          "line": 317
+        },
+        {
+          "kind": "review",
+          "state": "APPROVED",
+          "author": {
+            "login": "Tony133",
+            "avatar": "https://avatars.githubusercontent.com/u/11542387?u=4be9af77bb81859d65c2cfa0ecd305068119e9d4&v=4",
+            "url": "https://github.com/Tony133",
+            "bot": false,
+            "association": "MEMBER"
+          },
+          "body": "",
+          "at": "2026-11-19T15:40:49Z",
+          "url": "https://github.com/fastify/env-schema/pull/249#pullrequestreview-5978122131"
+        }
+      ],
+      "ci": {
+        "checks": [
+          {
+            "name": "test / Automerge Dependabot PRs",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/fastify/env-schema/actions/runs/44557780083/job/135686035646"
+          },
+          {
+            "name": "Socket Security: Pull Request Alerts",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/env-schema/runs/135678575780"
+          },
+          {
+            "name": "test / Test Fastify Integration",
+            "status": "completed",
+            "conclusion": "skipped",
+            "url": "https://github.com/fastify/env-schema/actions/runs/44557780083/job/135678538154"
+          },
+          {
+            "name": "test / Test (20, ubuntu-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/env-schema/actions/runs/44557780083/job/135678535159"
+          },
+          {
+            "name": "test / Test (24, macos-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/env-schema/actions/runs/44557780083/job/135678535034"
+          },
+          {
+            "name": "test / Test (22, windows-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/env-schema/actions/runs/44557780083/job/135678535007"
+          },
+          {
+            "name": "test / Test (26, windows-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/env-schema/actions/runs/44557780083/job/135678534988"
+          },
+          {
+            "name": "test / Test (22, ubuntu-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/env-schema/actions/runs/44557780083/job/135678534987"
+          },
+          {
+            "name": "test / Test (20, windows-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/env-schema/actions/runs/44557780083/job/135678534935"
+          },
+          {
+            "name": "test / Test (22, macos-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/env-schema/actions/runs/44557780083/job/135678534904"
+          },
+          {
+            "name": "test / Test (24, windows-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/env-schema/actions/runs/44557780083/job/135678534855"
+          },
+          {
+            "name": "test / quality-check / Dependency Review",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/env-schema/actions/runs/44557780083/job/135678534840"
+          },
+          {
+            "name": "test / Test (26, macos-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/env-schema/actions/runs/44557780083/job/135678534834"
+          },
+          {
+            "name": "test / Test (24, ubuntu-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/env-schema/actions/runs/44557780083/job/135678534761"
+          },
+          {
+            "name": "test / Test (26, ubuntu-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/env-schema/actions/runs/44557780083/job/135678534715"
+          },
+          {
+            "name": "test / Test (20, macos-latest)",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/env-schema/actions/runs/44557780083/job/135678534663"
+          },
+          {
+            "name": "test / quality-check / Check Licenses",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/env-schema/actions/runs/44557780083/job/135678534614"
+          },
+          {
+            "name": "test / quality-check / Lint Code",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/env-schema/actions/runs/44557780083/job/135678533950"
+          },
+          {
+            "name": "Socket Security: Project Report",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/fastify/env-schema/runs/135678454478"
+          }
+        ],
+        "awaitingApproval": [],
+        "summary": {
+          "total": 19,
+          "passed": 17,
+          "failed": 0,
+          "running": 0,
+          "skipped": 2
+        }
+      },
+      "stage": "merged"
+    }
+  ]
+}
